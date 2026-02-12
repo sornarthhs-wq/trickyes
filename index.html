@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Day Surprise</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            /* พื้นหลังไล่สี ชมพู-ส้มพีช */
+            background: linear-gradient(135deg, #ffdde1 0%, #ee9ca7 100%);
+            font-family: 'Prompt', sans-serif;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* กล่องการ์ดสีขาวตรงกลาง */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            border: 2px solid #fff;
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            color: #d32f2f;
+            font-size: 1.8rem;
+            margin: 20px 0;
+            font-weight: 700;
+        }
+
+        /* กำหนดขนาดรูปให้พอดี */
+        #mainImage {
+            width: 250px; 
+            height: 250px; 
+            object-fit: cover;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        /* กล่องใส่ปุ่ม */
+        .buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 30px;
+            gap: 50px; 
+            position: relative;
+            height: 80px; 
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Prompt', sans-serif;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            white-space: nowrap;
+            letter-spacing: 0.5px;
+        }
+
+        #yesBtn {
+            background-color: #4CAF50;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+            z-index: 1; 
+        }
+
+        #yesBtn:hover {
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5);
+            transform: translateY(-2px);
+        }
+
+        #noBtn {
+            background-color: #ff5252;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(255, 82, 82, 0.3);
+            z-index: 100;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div class="gif-container">
+            <img id="mainImage" src="story_0.jpg" alt="Start Image">
+        </div>
+
+        <h1 id="question">"You know a lot of math tricks, but do you know the trick to make someone click yes yet?"💖</h1>
+        <p style="color: #666; font-size: 0.9rem;">(try it if you want to know 😏)</p>
+
+        <div class="buttons">
+            <button id="yesBtn" onclick="tryClickYes()">(Yes)</button>
+            <button id="noBtn" onclick="clickNo()" onmouseover="runAway()">(No)</button>
+        </div>
+    </div>
+
+    <script>
+        let stage = 0; 
+        const runAwayStage = 6; 
+
+        let yesScale = 1;
+        let noScale = 1;
+
+        const noTexts = [
+            "(No)",              
+            "You wouldn't really hit \"No,\" would you? 🥺",    
+            "Think it over carefully.", 
+            "What the little jeap ",
+            " I'm Yoga not yoda but my name is Lao Fei",
+            "Catch me if you can  🤪" 
+        ];
+
+        const imagePaths = [
+            "story_0.jpg", 
+            "story_1.jpg", 
+            "story_2.jpg", 
+            "story_3.jpg", 
+            "story_4.jpg", 
+            "story_5.jpg"  
+        ];
+
+        function tryClickYes() {
+            if (stage < runAwayStage) {
+                if (stage === 0) {
+                    alert("Try say No first! 😜 ");
+                } else {
+                    alert("Click No, I dare you! 😏 ");
+                }
+            } else {
+                finalHappyEnding();
+            }
+        }
+
+        function clickNo() {
+            if (stage >= runAwayStage) return; 
+
+            stage++; 
+
+            if (stage < noTexts.length) {
+                document.getElementById("noBtn").innerText = noTexts[stage];
+            }
+
+            if (yesScale < 2.5) yesScale += 0.25; 
+            if (noScale > 0.5) noScale -= 0.08;  
+            
+            document.getElementById("yesBtn").style.transform = `scale(${yesScale})`;
+            document.getElementById("noBtn").style.transform = `scale(${noScale})`;
+
+            if (stage < imagePaths.length) {
+                document.getElementById("mainImage").src = imagePaths[stage];
+            }
+        }
+
+        // >>> แก้ไขฟังก์ชันนี้ครับ: เพิ่มระบบป้องกันปุ่มซ้อนทับ <<<
+        function runAway() {
+            if (stage >= runAwayStage) {
+                const noBtn = document.getElementById("noBtn");
+                const yesBtn = document.getElementById("yesBtn");
+
+                noBtn.style.position = "fixed"; 
+                
+                // หาตำแหน่งของปุ่ม Yes (เพื่อเอามาคำนวณระยะห่าง)
+                const yesRect = yesBtn.getBoundingClientRect();
+                const yesX = yesRect.left + (yesRect.width / 2);
+                const yesY = yesRect.top + (yesRect.height / 2);
+
+                let x, y, distance;
+                
+                // ลูปสุ่มตำแหน่งใหม่ไปเรื่อยๆ จนกว่าจะได้ตำแหน่งที่ไกลจากปุ่ม Yes พอ
+                do {
+                    x = Math.random() * (window.innerWidth - 100);
+                    y = Math.random() * (window.innerHeight - 100);
+
+                    // คำนวณระยะห่างระหว่างจุดใหม่ (x,y) กับปุ่ม Yes
+                    // ใช้สูตรพีทาโกรัส (Math Trick!) 
+                    const dx = x - yesX;
+                    const dy = y - yesY;
+                    distance = Math.sqrt(dx * dx + dy * dy);
+
+                } while (distance < 300); // *** เลข 300 คือระยะห่างขั้นต่ำ (Safe Zone) ***
+
+                noBtn.style.left = `${x}px`;
+                noBtn.style.top = `${y}px`;
+            }
+        }
+
+        function finalHappyEnding() {
+            document.querySelector('.card').innerHTML = `
+                <h1 style="color:#e91e63; font-size:2rem;">Have you figured out the "press yes" trick yet? 🎉❤️</h1>
+                <img src="https://media.tenor.com/gUiu1zyxfzYAAAAj/bear-kiss-bear-kisses.gif" style="width:200px; margin:20px 0;">
+                <p style="font-size:1.2rem; color:#444;">(I thought you’d never press it!!)</p>
+            `;
+        }
+    </script>
+
+</body>
+</html>
